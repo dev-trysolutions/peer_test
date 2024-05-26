@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PeerJS File Sharing</title>
+    <script src="https://cdn.jsdelivr.net/npm/peerjs@1.3.2/dist/peerjs.min.js"></script>
+</head>
+
+<body>
+    <h1>PeerJS File Sharing</h1>
+    <input type="file" id="fileInput">
+    <button onclick="sendFile()">Send File</button>
+
+    <div>
+        <h2>Received Image:</h2>
+        <img id="receivedImage" alt="No image received yet">
+    </div>
+
+    <script>
+        // Fixed Peer ID for both peers
+        const fixedPeerId = '84463668-48f3-4f66-95a7-b132d937c592';
+
+        // Initialize PeerJS with the fixed Peer ID
+        const peer = new Peer(fixedPeerId);
+
+        // When a connection is established
+        peer.on('open', function (id) {
+            console.log('My peer ID is: ' + id);
+        });
+
+        // Function to send file to peer
+        function sendFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Please select a file.');
+                return;
+            }
+
+            const peerId = 'e2b4243b-2b99-43f2-951d-916e3c583312'
+
+            const fileReader = new FileReader();
+            fileReader.onload = function (event) {
+                const fileData = event.target.result;
+
+                // Connect to peer
+                const conn = peer.connect(peerId);
+
+                // Send file data
+                conn.on('open', function () {
+                    console.log('Sending file ' + file.name);
+                    conn.send({
+                        type: 'file',
+                        name: file.name,
+                        data: fileData
+                    });
+                });
+            };
+
+            fileReader.readAsDataURL(file);
+        }
+
+        // Receive file from peer
+        peer.on('connection', function (conn) {
+            conn.on('data', function (data) {
+                if (data.type === 'file') {
+                    const receivedImage = document.getElementById('receivedImage');
+                    receivedImage.src = data.data;
+                    console.log('Received file ' + data.name);
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
