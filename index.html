@@ -69,7 +69,8 @@
                 if (data.type === 'file') {
                     const receivedImage = document.getElementById('receivedImage');
                     receivedImage.src = data.data;
-                    console.log('Received file ' + data.name);
+                    console.log('Received File ' + data.name);
+                    console.log('Received Data ' + data.data);
                 }
             });
         });
