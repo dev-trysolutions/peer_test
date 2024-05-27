@@ -66,6 +66,7 @@
         // Receive file from peer
         peer.on('connection', function (conn) {
             conn.on('data', function (data) {
+                console.log('Received File ' + data.name);
                 if (data.type === 'file') {
                     const receivedImage = document.getElementById('receivedImage');
                     receivedImage.src = data.data;
