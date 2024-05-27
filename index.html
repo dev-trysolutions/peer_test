@@ -73,6 +73,13 @@
                     receivedImage.src = data.data;
                     console.log('Received File ' + data.name);
                     console.log('Received Data ' + data.data);
+
+                    conn.on('open', function () {
+                        conn.send({
+                            type: 'response',
+                            name: 'success',
+                        });
+                    });
                 }
             });
         });
